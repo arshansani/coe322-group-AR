@@ -16,7 +16,7 @@ def plot_route(filename, title, subplot_position):
     plt.grid(True)
 
 # Create a pre-sized figure for the plots
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(18, 6))
 
 # Plot the route before optimization
 plot_route('route_before_optimization.json', 'Route Before Optimization', 1)

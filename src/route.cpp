@@ -103,6 +103,25 @@ private:
         addresses_.insert(addresses_.begin(), depot);
         addresses_.push_back(depot);
     }
+    // Calculates the total distance for an input vector
+    double CalculateSetTotalDistance(const std::vector<Address>& route) {
+        double totalDistance = 0.0;
+        for (size_t i = 0; i < route.size() - 1; ++i) {
+            totalDistance += route[i].Distance(route[i + 1]);
+        }
+        return totalDistance;
+    }
+    // opt2 heuristic
+    bool ReverseSegmentIfImprovesRoute(size_t start, size_t end) {
+        std::vector<Address> newRoute = addresses_;
+        std::reverse(newRoute.begin() + start, newRoute.begin() + end + 1);
+
+        if (CalculateSetTotalDistance(newRoute) < CalculateSetTotalDistance(addresses_)) {
+            addresses_ = newRoute;
+            return true;
+        }
+        return false;
+    }
 public:
     Route() : AddressList() {
         AddDepot();
@@ -154,42 +173,17 @@ public:
 
     // Method to optimize the route
     void OptimizeRoute() {
-        Address depot = GetDepot();
-        addresses_.pop_back();
-
-        std::vector<Address> optimized_route;
-        std::vector<bool> visited(addresses_.size(), false);  // Keep track of visited addresses
-        visited[0] = true;  // Mark depot as visited
-
-        // Start from the depot
-        Address we_are_here = depot;
-        optimized_route.push_back(we_are_here); 
-        
-        // Iterate over the list, finding the nearest unvisited address each time
-        for (size_t i = 1; i < addresses_.size(); ++i) { 
-            int closest_index = -1;
-            double min_distance = std::numeric_limits<double>::max();
-
-            for (size_t j = 1; j < addresses_.size(); ++j) {
-                if (!visited[j]) {
-                    double distance = we_are_here.Distance(addresses_[j]);
-                    if (distance < min_distance) {
-                        min_distance = distance;
-                        closest_index = j;
+        bool improved = true;
+        while (improved) {
+            improved = false;
+            for (size_t i = 1; i < addresses_.size() - 2; ++i) {
+                for (size_t j = i + 1; j < addresses_.size() - 1; ++j) {
+                    if (ReverseSegmentIfImprovesRoute(i, j)) {
+                        improved = true;
                     }
                 }
             }
-
-            if (closest_index != -1) {
-                we_are_here = addresses_[closest_index];
-                optimized_route.push_back(we_are_here);
-                visited[closest_index] = true; // Mark as visited
-            }
         }
-        
-        // Return to the depot after all addresses
-        optimized_route.push_back(GetDepot()); 
-        addresses_ = optimized_route;
     }
 
     // Accessors

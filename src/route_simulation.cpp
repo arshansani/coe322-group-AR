@@ -12,7 +12,7 @@ int main() {
     int service_range = 20;
     int prime_latest_delivery_date = 1;
     int regular_latest_delivery_date = 14;
-    int num_addresses = 10;
+    int num_addresses = 1000;
     double prime_customers_percent = 0.3;
 
     AddressList list;
