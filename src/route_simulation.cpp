@@ -1,8 +1,9 @@
-#include "route.cpp"  // Include the class definitions
+#include "route.cpp"
 #include <ctime>
 #include <fstream>
 #include <sstream>
 
+// Initialize functions
 void WriteRouteToJson(const std::vector<Address>&, const std::string&);
 Address GenerateRandomAddress(int, int);
 
@@ -16,7 +17,7 @@ int main() {
     int service_range = 20;
     int prime_latest_delivery_date = 1;
     int regular_latest_delivery_date = 14;
-    int num_addresses = 1000;
+    int num_addresses = 100;
     double prime_customers_percent = 0.3;
     // Create a quantity of prime addresses and non prime addresses
     int num_prime_addresses = num_addresses * prime_customers_percent;

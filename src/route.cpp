@@ -7,7 +7,7 @@
 // Class representing an individual address
 class Address {
 private:
-    double x_, y_; // Coordinates
+    double x_, y_;
     int last_delivery_date_;
 public:
     Address(double x, double y, int last_delivery_date) 
@@ -35,7 +35,7 @@ public:
         return last_delivery_date_;
     }
 
-    // Define equality operator for Address
+    // Overload equality operator for Address
     bool operator==(const Address& other) const {
         return x_ == other.x_ && y_ == other.y_ && last_delivery_date_ == other.last_delivery_date_;
     }
@@ -45,6 +45,22 @@ public:
 class AddressList {
 protected:
     std::vector<Address> addresses_;
+
+    // Find the closest unvisited address to the given address
+    int IndexClosestTo(const Address& address, const std::vector<bool>& visited) const {
+        int closest_index = -1;
+        double min_distance = std::numeric_limits<double>::max();
+        for (size_t i = 0; i < addresses_.size(); ++i) {
+            if(!visited[i]){
+                double distance = address.Distance(addresses_[i]);
+                if (distance < min_distance) {
+                    min_distance = distance;
+                    closest_index = static_cast<int>(i);
+                }
+            }
+        }
+        return closest_index;
+    }
 public:
     AddressList() {}
 
@@ -75,31 +91,17 @@ public:
         return total_distance;
     }
 
-    // Find the address closest to the given address
-    int IndexClosestTo(const Address& address) const {
-        int closest_index = -1;
-        double min_distance = std::numeric_limits<double>::max();
-        for (size_t i = 0; i < addresses_.size(); ++i) {
-            double distance = address.Distance(addresses_[i]);
-            if (distance < min_distance) {
-                min_distance = distance;
-                closest_index = static_cast<int>(i);
-            }
-        }
-        return closest_index;
-    }
-
-    // Accessors for addresses
+    // Accessors
     std::vector<Address> GetAddresses() const {
         return addresses_;
     }
 };
 
-// Class representing the overall route
+// Class representing the actual route including the depots
 class Route : public AddressList {
 private:
     void AddDepot(){
-        Address depot(0, 0, 0);
+        Address depot = GetDepot();
         addresses_.insert(addresses_.begin(), depot);
         addresses_.push_back(depot);
     }
@@ -123,51 +125,46 @@ private:
         return false;
     }
 public:
+    // Constructors to create Route with initial_addresses
+    // Don't really understand why its this way, changing it gave me errors
     Route() : AddressList() {
         AddDepot();
     }
-
-    // Constructor to accept a vector of initial addresses
     Route(const std::vector<Address>& initial_addresses) : AddressList(initial_addresses) {
         AddDepot();
     }
+    
+    // Location of the depot, always the origin
+    Address GetDepot(){
+        Address depot(0, 0, 0);
+        return depot;
+    }
 
+    // Method to optimize the route using the greedy search algorithm
     void GreedyRoute() {
         Address depot = GetDepot();
         addresses_.pop_back();
 
         std::vector<Address> optimized_route;
-        std::vector<bool> visited(addresses_.size(), false);  // Keep track of visited addresses
-        visited[0] = true;  // Mark depot as visited
-
-        // Start from the depot
-        Address we_are_here = depot;
-        optimized_route.push_back(we_are_here); 
+        std::vector<bool> visited(addresses_.size(), false);
         
+        // Mark depot as visited & as the starting point
+        visited[0] = true; 
+        Address we_are_here = depot;
+        optimized_route.push_back(depot);
+
         // Iterate over the list, finding the nearest unvisited address each time
-        for (size_t i = 1; i < addresses_.size(); ++i) { 
-            int closest_index = -1;
-            double min_distance = std::numeric_limits<double>::max();
-
-            for (size_t j = 1; j < addresses_.size(); ++j) {
-                if (!visited[j]) {
-                    double distance = we_are_here.Distance(addresses_[j]);
-                    if (distance < min_distance) {
-                        min_distance = distance;
-                        closest_index = j;
-                    }
-                }
-            }
-
-            if (closest_index != -1) {
+        for (size_t i = 1; i < addresses_.size(); ++i) {
+            int closest_index = IndexClosestTo(we_are_here, visited);
+            if (closest_index != -1 && !visited[closest_index]) {
                 we_are_here = addresses_[closest_index];
                 optimized_route.push_back(we_are_here);
-                visited[closest_index] = true; // Mark as visited
+                visited[closest_index] = true;
             }
         }
-        
+
         // Return to the depot after all addresses
-        optimized_route.push_back(GetDepot()); 
+        optimized_route.push_back(GetDepot());
         addresses_ = optimized_route;
     }
 
@@ -184,11 +181,6 @@ public:
                 }
             }
         }
-    }
-
-    // Accessors
-    const Address& GetDepot() const {
-        return addresses_.front(); // Assuming the depot is always the first address
     }
 };
 
