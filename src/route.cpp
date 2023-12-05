@@ -123,8 +123,8 @@ public:
         visited[0] = true;  // Mark depot as visited
 
         // Start from the depot
-        Address current_address = depot;
-        optimized_route.push_back(current_address); 
+        Address we_are_here = depot;
+        optimized_route.push_back(we_are_here); 
         
         // Iterate over the list, finding the nearest unvisited address each time
         for (size_t i = 1; i < addresses_.size(); ++i) { 
@@ -133,7 +133,7 @@ public:
 
             for (size_t j = 1; j < addresses_.size(); ++j) {
                 if (!visited[j]) {
-                    double distance = current_address.Distance(addresses_[j]);
+                    double distance = we_are_here.Distance(addresses_[j]);
                     if (distance < min_distance) {
                         min_distance = distance;
                         closest_index = j;
@@ -142,8 +142,8 @@ public:
             }
 
             if (closest_index != -1) {
-                current_address = addresses_[closest_index];
-                optimized_route.push_back(current_address);
+                we_are_here = addresses_[closest_index];
+                optimized_route.push_back(we_are_here);
                 visited[closest_index] = true; // Mark as visited
             }
         }
@@ -158,3 +158,33 @@ public:
         return addresses_.front(); // Assuming the depot is always the first address
     }
 };
+
+int main() {
+    // Example addresses
+    Address address1(2, 0, 5);
+    Address address2(1, 0, 3);
+    Address address3(3, 0, 3);
+    Address address4(15, 6, 11);
+
+    // Create a route with initial addresses
+    Route route({address1, address2, address3, address4});
+
+    // Print the initial route
+    std::cout << "Initial Route: ";
+    for (const Address& address : route.GetAddresses()) {
+        std::cout << "(" << address.GetX() << ", " << address.GetY() << ") ";
+    }
+    std::cout << "\nInitial Total Distance: " << route.TotalDistance() << "\n";
+
+    // Apply the Kernighan-Lin optimization
+    route.OptimizeRoute();
+
+    // Print the optimized route
+    std::cout << "\nOptimized Route: ";
+    for (const Address& address : route.GetAddresses()) {
+        std::cout << "(" << address.GetX() << ", " << address.GetY() << ") ";
+    }
+    std::cout << "\nOptimized Total Distance: " << route.TotalDistance() << "\n";
+
+    return 0;
+}
