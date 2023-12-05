@@ -3,3 +3,6 @@
 
 # Ignore executible files
 *.exe
+
+# Ignore JSON files
+*.json
