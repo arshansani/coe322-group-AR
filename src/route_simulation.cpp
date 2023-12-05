@@ -10,14 +10,24 @@ int main() {
     std::srand(std::time(0)); // Seed for random number generation
 
     int service_range = 20;
-    int latest_delivery_date = 14;
-    int num_addresses = 100;
+    int prime_latest_delivery_date = 1;
+    int regular_latest_delivery_date = 14;
+    int num_addresses = 10;
+    double prime_customers_percent = 0.3;
 
     AddressList list;
 
+    // Create a quantity of prime addresses and non prime addresses
+    int num_prime_addresses = num_addresses * prime_customers_percent;
+    int num_regular_addresses = num_addresses * (1 - prime_customers_percent);
+
     // Generate and add random addresses
-    for (int i = 0; i < num_addresses; ++i) {
-        Address random_address = GenerateRandomAddress(service_range, latest_delivery_date);
+    for (int i = 0; i < num_prime_addresses; ++i) {
+        Address random_address = GenerateRandomAddress(service_range, prime_latest_delivery_date);
+        list.AddAddress(random_address);
+    }
+    for (int i = 0; i < num_regular_addresses; ++i) {
+        Address random_address = GenerateRandomAddress(service_range, regular_latest_delivery_date);
         list.AddAddress(random_address);
     }
 
@@ -45,7 +55,7 @@ int main() {
 Address GenerateRandomAddress(int range, int latest_delivery_date) {
     int x = (std::rand() % (2 * range + 1)) - range;
     int y = (std::rand() % (2 * range + 1)) - range;
-    int last_delivery_date = 1 + std::rand() % latest_delivery_date; // Random date within a month
+    int last_delivery_date = latest_delivery_date; // Random date within a month
     return Address(x, y, last_delivery_date);
 }
 
