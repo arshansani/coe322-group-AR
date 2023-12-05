@@ -8,7 +8,7 @@ def plot_route(filename, title, subplot_position):
     x = [point['x'] for point in data]
     y = [point['y'] for point in data]
 
-    plt.subplot(1, 2, subplot_position)
+    plt.subplot(1, 3, subplot_position)
     plt.plot(x, y, marker='o')
     plt.title(title)
     plt.xlabel('X Coordinate')
@@ -22,7 +22,10 @@ plt.figure(figsize=(12, 6))
 plot_route('route_before_optimization.json', 'Route Before Optimization', 1)
 
 # Plot the route after optimization
-plot_route('route_after_optimization.json', 'Route After Optimization', 2)
+plot_route('route_after_greedy_optimization.json', 'Route After Greedy Optimization', 2)
+
+# Plot the route after optimization
+plot_route('route_after_optimization.json', 'Route After Optimization', 3)
 
 # Show the plots
 plt.tight_layout()

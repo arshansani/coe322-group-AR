@@ -39,9 +39,16 @@ int main() {
     // Save coordinates to a JSON-like file before and after optimization
     WriteRouteToJson(route.GetAddresses(), "route_before_optimization.json");
 
-    // Placeholder for optimization
-    route.OptimizeRoute();
+    // Greedy routing optimization
+    route.GreedyRoute();
+    // Calculate optimized total distance
+    double greedy_distance = route.TotalDistance();
+    std::cout << "Greedy total distance: " << greedy_distance << std::endl;
+    // Save coordinates to a JSON-like file after optimization
+    WriteRouteToJson(route.GetAddresses(), "route_after_greedy_optimization.json");
 
+    // Optimize the route
+    route.OptimizeRoute();
     // Calculate optimized total distance
     double optimized_distance = route.TotalDistance();
     std::cout << "Optimized total distance: " << optimized_distance << std::endl;

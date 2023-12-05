@@ -113,6 +113,45 @@ public:
         AddDepot();
     }
 
+    void GreedyRoute() {
+        Address depot = GetDepot();
+        addresses_.pop_back();
+
+        std::vector<Address> optimized_route;
+        std::vector<bool> visited(addresses_.size(), false);  // Keep track of visited addresses
+        visited[0] = true;  // Mark depot as visited
+
+        // Start from the depot
+        Address we_are_here = depot;
+        optimized_route.push_back(we_are_here); 
+        
+        // Iterate over the list, finding the nearest unvisited address each time
+        for (size_t i = 1; i < addresses_.size(); ++i) { 
+            int closest_index = -1;
+            double min_distance = std::numeric_limits<double>::max();
+
+            for (size_t j = 1; j < addresses_.size(); ++j) {
+                if (!visited[j]) {
+                    double distance = we_are_here.Distance(addresses_[j]);
+                    if (distance < min_distance) {
+                        min_distance = distance;
+                        closest_index = j;
+                    }
+                }
+            }
+
+            if (closest_index != -1) {
+                we_are_here = addresses_[closest_index];
+                optimized_route.push_back(we_are_here);
+                visited[closest_index] = true; // Mark as visited
+            }
+        }
+        
+        // Return to the depot after all addresses
+        optimized_route.push_back(GetDepot()); 
+        addresses_ = optimized_route;
+    }
+
     // Method to optimize the route
     void OptimizeRoute() {
         Address depot = GetDepot();
@@ -159,6 +198,7 @@ public:
     }
 };
 
+/*
 int main() {
     // Example addresses
     Address address1(2, 0, 5);
@@ -188,3 +228,4 @@ int main() {
 
     return 0;
 }
+*/
