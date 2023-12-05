@@ -171,7 +171,7 @@ public:
         addresses_ = optimized_route;
     }
 
-    // Method to optimize the route
+    // Method to optimize the route using opt2
     void OptimizeRoute() {
         bool improved = true;
         while (improved) {
