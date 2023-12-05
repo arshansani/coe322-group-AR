@@ -45,7 +45,7 @@ int main() {
     double greedy_distance = route.TotalDistance();
     std::cout << "Greedy total distance: " << greedy_distance << std::endl;
     // Save coordinates to a JSON-like file after optimization
-    WriteRouteToJson(route.GetAddresses(), "route_after_greedy_optimization.json");
+    WriteRouteToJson(route.GetAddresses(), "route_after_greedy_search.json");
 
     // Optimize the route
     route.OptimizeRoute();

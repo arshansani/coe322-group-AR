@@ -22,7 +22,7 @@ plt.figure(figsize=(12, 6))
 plot_route('route_before_optimization.json', 'Route Before Optimization', 1)
 
 # Plot the route after optimization
-plot_route('route_after_greedy_optimization.json', 'Route After Greedy Optimization', 2)
+plot_route('route_after_greedy_search.json', 'Route After Greedy Search', 2)
 
 # Plot the route after optimization
 plot_route('route_after_optimization.json', 'Route After Optimization', 3)
