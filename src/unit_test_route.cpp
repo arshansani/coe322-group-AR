@@ -13,8 +13,8 @@ bool AreAlmostEqual(double a, double b, double epsilon = 0.001) {
 }
 
 void TestAddressDistance() {
-    Address a1(0, 0, 5);
-    Address a2(3, 4, 10);
+    Address a1(0, 0, false);
+    Address a2(3, 4, false);
     double expected_distance = 7; // Manhattan distance
 
     if (AreAlmostEqual(a1.Distance(a2), expected_distance)) {
@@ -26,9 +26,9 @@ void TestAddressDistance() {
 }
 
 void TestAddressHasSameLocation() {
-    Address a1(0, 0, 5);
-    Address a2(0, 0, 2);
-    Address a3(3, 4, 10);
+    Address a1(0, 0, false);
+    Address a2(0, 0, false);
+    Address a3(3, 4, false);
 
     if (a1.HasSameLocation(a2) && !a1.HasSameLocation(a3)) {
         std::cout << "TestAddressHasSameLocation: " << green << "Passed\n" << white;
@@ -40,13 +40,13 @@ void TestAddressHasSameLocation() {
 
 void TestAddressListAddAddress() {
     AddressList list;
-    list.AddAddress(Address(0, 0, 5));
-    list.AddAddress(Address(0, 0, 8));
-    list.AddAddress(Address(0, 0, 3));
-    list.AddAddress(Address(5, 2, 2));
-    int expected_delivery_date = 3; // Earliest Delivery Date
+    list.AddAddress(Address(0, 0, false));
+    list.AddAddress(Address(0, 0, false));
+    list.AddAddress(Address(0, 0, false));
+    list.AddAddress(Address(5, 2, false));
+    int prime_status = false; // Earliest Delivery Date
     
-    if (list.GetAddresses().at(0).GetLastDeliveryDate() == expected_delivery_date && list.GetAddresses().size() == 2) {
+    if (list.GetAddresses().at(0).GetPrimeStatus() == prime_status && list.GetAddresses().size() == 2) {
         std::cout << "TestAddressListAddAddress: " << green << "Passed\n" << white;
     } 
     else {
@@ -56,9 +56,9 @@ void TestAddressListAddAddress() {
 
 void TestAddressListTotalDistance() {
     AddressList list;
-    list.AddAddress(Address(0, 0, 5));
-    list.AddAddress(Address(3, 4, 10));
-    list.AddAddress(Address(6, 8, 15));
+    list.AddAddress(Address(0, 0, false));
+    list.AddAddress(Address(3, 4, false));
+    list.AddAddress(Address(6, 8, false));
     double expected_distance = 14.0; // Total Manhattan distance
 
     if (AreAlmostEqual(list.TotalDistance(), expected_distance)) {

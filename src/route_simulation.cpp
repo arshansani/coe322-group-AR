@@ -9,8 +9,8 @@ Address GenerateRandomAddress(int, int);
 
 int main() {
     // Seed for random number generation
-    std::srand(std::time(0)); 
-    //std::srand(0); // Debugging
+    //std::srand(std::time(0)); // Random seed
+    std::srand(0); // Comparing the same routes
 
     // Delivery truck parameters
     int truck_daily_deliveries = 100;
@@ -18,7 +18,7 @@ int main() {
     // Address parameters
     int service_range = 20;
     int num_addresses = 100;
-    double prime_customers_percent = 0.3;
+    double prime_customers_percent = 0.0;
     // Create a quantity of prime addresses and non prime addresses
     int num_prime_addresses = num_addresses * prime_customers_percent;
     int num_regular_addresses = num_addresses - num_prime_addresses;
@@ -69,13 +69,11 @@ int main() {
     }
     std::cout << "Initial Combined Total Distance: " << total_initial_distance << "\n";
     std::cout << "Greedy Combined Total Distance: " << total_greedy_distance << "\n";
-    std::cout << "Individual Opt2 Combined Total Distance: " << total_individual_opt2_distance << "\n";
+    std::cout << "Individual Opt2 Combined Total Distance: " << total_individual_opt2_distance << "\n\n";
 
     // Opt 2 Optimize across the two routes
-    if (num_trucks >= 2) {
-        std::cout << "Starting multi-route optimization...\n";
+    if (num_trucks == 2) {
         Route::OptimizeTwoRoutes(trucks[0], trucks[1]);
-        std::cout << "Multi-route optimization completed.\n";
 
         for (int i = 0; i < num_trucks; ++i) {
             total_simultaneous_opt2_distance += trucks[i].TotalDistance();

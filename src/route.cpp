@@ -270,7 +270,7 @@ public:
     // Optimize multiple routes using the opt2 heuristic
     static void OptimizeTwoRoutes(Route& route1, Route& route2) {
         try {
-            std::cout << "Inside OptimizeTwoRoutes method...\n";
+            //std::cout << "Inside OptimizeTwoRoutes method...\n";
 
             bool improved = true;
             while (improved) {
@@ -294,42 +294,10 @@ public:
                     }
                 }
             }
-            std::cout << "Exiting OptimizeTwoRoutes method...\n";
+            //std::cout << "Exiting OptimizeTwoRoutes method...\n";
         }
         catch (const std::exception& e) {
             std::cerr << "Exception caught in OptimizeTwoRoutes: " << e.what() << std::endl;
         }
     }
 };
-
-/*
-int main() {
-    // Example addresses
-    Address address1(2, 0, 5);
-    Address address2(1, 0, 3);
-    Address address3(3, 0, 3);
-    Address address4(15, 6, 11);
-
-    // Create a route with initial addresses
-    Route route({address1, address2, address3, address4});
-
-    // Print the initial route
-    std::cout << "Initial Route: ";
-    for (const Address& address : route.GetAddresses()) {
-        std::cout << "(" << address.GetX() << ", " << address.GetY() << ") ";
-    }
-    std::cout << "\nInitial Total Distance: " << route.TotalDistance() << "\n";
-
-    // Apply the Kernighan-Lin optimization
-    route.OptimizeRoute();
-
-    // Print the optimized route
-    std::cout << "\nOptimized Route: ";
-    for (const Address& address : route.GetAddresses()) {
-        std::cout << "(" << address.GetX() << ", " << address.GetY() << ") ";
-    }
-    std::cout << "\nOptimized Total Distance: " << route.TotalDistance() << "\n";
-
-    return 0;
-}
-*/
