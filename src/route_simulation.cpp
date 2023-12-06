@@ -122,6 +122,8 @@ Address GenerateRandomAddress(int range, int latest_delivery_date) {
 
 // Write the list of addresses to a JSON file for plotting using python
 void WriteRouteToJson(const std::vector<Address>& addresses, const std::string& filename) {
+    return; // Used to disable writing to JSON
+
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error opening file: " << filename << std::endl;
