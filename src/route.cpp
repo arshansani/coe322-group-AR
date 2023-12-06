@@ -1,3 +1,11 @@
+// Name: Arsh Dauwa
+// uteid: ae26933
+// TACC Username: ArshDauwa
+
+// Name: Arshan Saniei-Sani
+// uteid: AS97297
+// TACC Username: as97297
+
 #include <iostream>
 #include <cmath>
 #include <vector>
