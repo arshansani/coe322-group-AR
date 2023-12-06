@@ -272,11 +272,9 @@ public:
                         for (size_t i2 = 1; i2 < route2.addresses_.size() - 2; ++i2) {
                             for (size_t j2 = i2 + 1; j2 < std::min(static_cast<size_t>(5), route1.addresses_.size() - 2); ++j2) {
                             //for (size_t j2 = i2 + 1; j2 < route2.addresses_.size() - 1; ++j2) {
-                                //std::cout << "Entering inner loop \n";
-                                if (route1.SwapAndReverseSegments(route2, i1, j1, i2, j2)) {
-                                    improved = true;
-                                }
-                                //std::cout << "Exiting inner loop \n";
+                                // std::cout << "Entering inner loop \n";
+                                improved = route1.SwapAndReverseSegments(route2, i1, j1, i2, j2);
+                                // std::cout << "Exiting inner loop, improved = " << improved << "\n";
                             }
                         }
                     }

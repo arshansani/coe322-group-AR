@@ -4,7 +4,7 @@ import os
 import re
 
 def plot_route(filenames, title, subplot_position):
-    plt.subplot(1, 3, subplot_position)
+    plt.subplot(1, 4, subplot_position)
     
     for i, filename in enumerate(filenames):
         with open(filename, 'r') as file:
@@ -26,10 +26,10 @@ def find_files(pattern):
     return sorted(files, key=lambda x: int(re.search(r'\d+', x).group()))
 
 # Create a pre-sized figure for the plots
-plt.figure(figsize=(18, 6))
+plt.figure(figsize=(24, 6))
 
 # Find and plot routes
-route_patterns = ['initial_route', 'greedy_route', 'individual_opt2_route']
+route_patterns = ['initial_route', 'greedy_route', 'individual_opt2_route', 'combined_opt2_route']
 for i, pattern in enumerate(route_patterns):
     files = find_files(f"{pattern}_\d+.json")
     if files:
