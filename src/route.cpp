@@ -277,7 +277,7 @@ public:
 
     // Optimize multiple routes using the opt2 heuristic
     static void OptimizeTwoRoutes(Route& route1, Route& route2) {
-        try {
+        //try {
             //std::cout << "Inside OptimizeTwoRoutes method...\n";
 
             bool improved = true;
@@ -303,9 +303,9 @@ public:
                 }
             }
             //std::cout << "Exiting OptimizeTwoRoutes method...\n";
-        }
-        catch (const std::exception& e) {
-            std::cerr << "Exception caught in OptimizeTwoRoutes: " << e.what() << std::endl;
-        }
+        //}
+        //catch (const std::exception& e) {
+        //    std::cerr << "Exception caught in OptimizeTwoRoutes: " << e.what() << std::endl;
+        //}
     }
 };
