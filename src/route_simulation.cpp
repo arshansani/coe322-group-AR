@@ -8,11 +8,12 @@ void WriteRouteToJson(const std::vector<Address>&, const std::string&);
 Address GenerateRandomAddress(int, int);
 
 int main() {
-    std::srand(std::time(0)); // Seed for random number generation
+    // Seed for random number generation
+    std::srand(std::time(0)); 
 
     // Delivery truck parameters
     int truck_daily_deliveries = 100;
-    int num_trucks = 1;
+    int num_trucks = 2;
     // Address parameters
     int service_range = 20;
     int prime_latest_delivery_date = 1;
@@ -21,10 +22,14 @@ int main() {
     double prime_customers_percent = 0.3;
     // Create a quantity of prime addresses and non prime addresses
     int num_prime_addresses = num_addresses * prime_customers_percent;
-    int num_regular_addresses = num_addresses * (1 - prime_customers_percent);
+    int num_regular_addresses = num_addresses - num_prime_addresses;
+    // Initialize total distances
+    double total_initial_distance = 0;
+    double total_greedy_distance = 0;
+    double total_individual_opt2_distance = 0;
+    double total_simultaneous_opt2_distance = 0;
 
-
-    // Generate and add random addresses
+    // Generate random addresses
     AddressList list;
     for (int i = 0; i < num_prime_addresses; ++i) {
         Address random_address = GenerateRandomAddress(service_range, prime_latest_delivery_date);
@@ -35,7 +40,56 @@ int main() {
         list.AddAddress(random_address);
     }
 
-    // Initialize route so the starting end ending points are the depot
+    // Divide addresses between trucks
+    std::vector<Route> trucks(num_trucks, Route());
+    for (int i = 0; i < num_addresses; ++i) {
+        trucks[i % num_trucks].AddAddress(list.GetAddresses()[i]);
+    }
+
+    // Write the individual routes to JSON files
+    for (int i = 0; i < num_trucks; ++i) {
+        total_initial_distance += trucks[i].TotalDistance();
+        std::cout << "Initial Route " << i + 1 << " Total Distance: " << trucks[i].TotalDistance() << "\n";
+        std::string filename = "initial_route_" + std::to_string(i) + ".json";
+        WriteRouteToJson(trucks[i].GetAddresses(), filename);
+
+        trucks[i].GreedyRoute();
+        total_greedy_distance += trucks[i].TotalDistance();
+        std::cout << "Greedy Route " << i + 1 << " Total Distance: " << trucks[i].TotalDistance() << "\n";
+        filename = "greedy_route_" + std::to_string(i) + ".json";
+        WriteRouteToJson(trucks[i].GetAddresses(), filename);
+
+        trucks[i].OptimizeRoute();
+        total_individual_opt2_distance += trucks[i].TotalDistance();
+        std::cout << "Individual Opt2 Route " << i + 1 << " Total Distance: " << trucks[i].TotalDistance() << "\n\n";
+        filename = "individual_opt2_route_" + std::to_string(i) + ".json";
+        WriteRouteToJson(trucks[i].GetAddresses(), filename);
+    }
+    std::cout << "Initial Combined Total Distance: " << total_initial_distance << "\n";
+    std::cout << "Greedy Combined Total Distance: " << total_greedy_distance << "\n";
+    std::cout << "Individual Opt2 Combined Total Distance: " << total_individual_opt2_distance << "\n";
+
+/*
+    // Opt 2 Optimize across the two routes
+    if (num_trucks >= 2) {
+        std::cout << "Starting multi-route optimization...\n";
+        Route::OptimizeTwoRoutes(trucks[0], trucks[1]);
+        std::cout << "Multi-route optimization completed.\n";
+
+        for (int i = 0; i < num_trucks; ++i) {
+            total_simultaneous_opt2_distance += trucks[i].TotalDistance();
+            std::cout << "Combined Opt2 Route " << i + 1 << " Total Distance: " << trucks[i].TotalDistance() << "\n";
+            std::string filename = "combined_opt2_route_" + std::to_string(i) + ".json";
+            WriteRouteToJson(trucks[i].GetAddresses(), filename);
+        }
+        std::cout << "Simultaneous Opt2 Combined Total Distance: " << total_simultaneous_opt2_distance << "\n";
+    }
+    else {
+        std::cout << "Not enough trucks for multi-route optimization.\n";
+    }
+*/
+/*
+    // Initialize route using addresses
     Route route(list.GetAddresses());
 
     // Calculate initial total distance
@@ -54,6 +108,7 @@ int main() {
     double optimized_distance = route.TotalDistance();
     std::cout << "Optimized total distance: " << optimized_distance << std::endl;
     WriteRouteToJson(route.GetAddresses(), "route_after_optimization.json");
+*/
 
     return 0;
 }

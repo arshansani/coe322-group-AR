@@ -124,6 +124,55 @@ private:
         }
         return false;
     }
+
+    static std::vector<Address> ExtractAndReverseSegment(const std::vector<Address>& route, size_t start, size_t end, bool reverse) {
+        std::vector<Address> segment(route.begin() + start, route.begin() + end + 1);
+        if (reverse) {
+            std::reverse(segment.begin(), segment.end());
+        }
+        return segment;
+    }
+
+    static void SwapSegments(std::vector<Address>& route1, size_t start1, size_t end1, std::vector<Address>& route2, size_t start2, size_t end2) {
+        std::vector<Address> tempSegment1(route1.begin() + start1, route1.begin() + end1 + 1);
+        std::vector<Address> tempSegment2(route2.begin() + start2, route2.begin() + end2 + 1);
+
+        std::copy(tempSegment2.begin(), tempSegment2.end(), route1.begin() + start1);
+        std::copy(tempSegment1.begin(), tempSegment1.end(), route2.begin() + start2);
+    }
+
+    bool TrySwapAndReverseSegments(Route& otherRoute, size_t i1, size_t j1, size_t i2, size_t j2) {
+        std::cout << "Inside TrySwapAndReverseSegments. i1: " << i1 << ", j1: " << j1 << ", i2: " << i2 << ", j2: " << j2 << "\n";
+        bool improvementFound = false;
+        double originalTotalDistance = CalculateSetTotalDistance(this->addresses_) 
+                                     + CalculateSetTotalDistance(otherRoute.addresses_);
+
+        // Create copies of the original routes for manipulation
+        std::vector<Address> newRoute1 = this->addresses_;
+        std::vector<Address> newRoute2 = otherRoute.addresses_;
+
+        for (int reverse1 = 0; reverse1 <= 1; ++reverse1) {
+            for (int reverse2 = 0; reverse2 <= 1; ++reverse2) {
+                std::vector<Address> segment1 = ExtractAndReverseSegment(newRoute1, i1, j1, reverse1);
+                std::vector<Address> segment2 = ExtractAndReverseSegment(newRoute2, i2, j2, reverse2);
+
+                SwapSegments(newRoute1, i1, j1, newRoute2, i2, j2);
+
+                double newTotalDistance = CalculateSetTotalDistance(newRoute1) 
+                                        + CalculateSetTotalDistance(newRoute2);
+
+                if (newTotalDistance < originalTotalDistance) {
+                    this->SetRoute(newRoute1);
+                    otherRoute.SetRoute(newRoute2);
+                    originalTotalDistance = newTotalDistance;
+                    improvementFound = true;
+                }
+            }
+        }
+        std::cout << "Exiting TrySwapAndReverseSegments.\n";
+        return false; // Return false for debugging
+        //return improvementFound;
+    }
 public:
     // Constructors to create Route with initial_addresses
     // Don't really understand why its this way, changing it gave me errors
@@ -140,7 +189,11 @@ public:
         return depot;
     }
 
-    // Method to optimize the route using the greedy search algorithm
+    void SetRoute(const std::vector<Address>& newAddresses) {
+        addresses_ = newAddresses;
+    }
+
+    // Optimize the route using the greedy search algorithm
     void GreedyRoute() {
         Address depot = GetDepot();
         addresses_.pop_back();
@@ -168,7 +221,7 @@ public:
         addresses_ = optimized_route;
     }
 
-    // Method to optimize the route using opt2
+    // Optimize the route using the opt2 heuristic
     void OptimizeRoute() {
         bool improved = true;
         while (improved) {
@@ -180,6 +233,35 @@ public:
                     }
                 }
             }
+        }
+    }
+
+    // Optimize multiple routes using the opt2 heuristic
+    static void OptimizeTwoRoutes(Route& route1, Route& route2) {
+        try {
+            std::cout << "Inside OptimizeTwoRoutes method...\n";
+
+            bool improved = true;
+            while (improved) {
+                improved = false;
+
+                for (size_t i1 = 1; i1 < route1.addresses_.size() - 2; ++i1) {
+                    for (size_t j1 = i1 + 1; j1 < route1.addresses_.size() - 1; ++j1) {
+                        for (size_t i2 = 1; i2 < route2.addresses_.size() - 2; ++i2) {
+                            //for (size_t j2 = i2 + 1; j2 < std::min(static_cast<size_t>(5), route1.addresses_.size() - 2); ++j2) {
+                            for (size_t j2 = i2 + 1; j2 < route2.addresses_.size() - 1; ++j2) {
+                                if (route1.TrySwapAndReverseSegments(route2, i1, j1, i2, j2)) {
+                                    improved = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            std::cout << "Exiting OptimizeTwoRoutes method...\n";
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Exception caught in OptimizeTwoRoutes: " << e.what() << std::endl;
         }
     }
 };
