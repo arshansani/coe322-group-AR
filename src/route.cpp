@@ -8,12 +8,12 @@
 class Address {
 private:
     double x_, y_;
-    int last_delivery_date_;
+    bool prime_;
 public:
-    Address() : x_(0.0), y_(0.0), last_delivery_date_(0) {}
+    Address() : x_(0.0), y_(0.0), prime_(0) {}
 
-    Address(double x, double y, int last_delivery_date) 
-        : x_(x), y_(y), last_delivery_date_(last_delivery_date) {}
+    Address(double x, double y, int prime) 
+        : x_(x), y_(y), prime_(prime) {}
 
     // Calculate the distance to another address
     double Distance(const Address& other) const {
@@ -33,13 +33,13 @@ public:
     double GetY() const { 
         return y_;
     }
-    int GetLastDeliveryDate() const {
-        return last_delivery_date_;
+    bool GetPrimeStatus() const {
+        return prime_;
     }
 
     // Overload equality operator for Address
     bool operator==(const Address& other) const {
-        return x_ == other.x_ && y_ == other.y_ && last_delivery_date_ == other.last_delivery_date_;
+        return x_ == other.x_ && y_ == other.y_ && prime_ == other.prime_;
     }
 };
 
@@ -75,7 +75,7 @@ public:
         for (Address& existing_address : addresses_) {
             if (existing_address.HasSameLocation(address)) {
                 // If the address location already exists, update the delivery date if the new date is earlier
-                if (address.GetLastDeliveryDate() < existing_address.GetLastDeliveryDate()) {
+                if (address.GetPrimeStatus() < existing_address.GetPrimeStatus()) {
                     existing_address = address; // Update existing address with the new address details
                 }
                 return; // Address already exists based on location, so return
@@ -115,6 +115,16 @@ private:
         }
         return totalDistance;
     }
+
+    bool AnyAddressIsPrime(size_t start, size_t end) const {
+        for (size_t i = start; i <= end; ++i) {
+            if (addresses_[i].GetPrimeStatus()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // opt2 heuristic
     bool ReverseSegmentIfImprovesRoute(size_t start, size_t end) {
         std::vector<Address> newRoute = addresses_;
@@ -273,7 +283,11 @@ public:
                             for (size_t j2 = i2 + 1; j2 < std::min(static_cast<size_t>(5), route1.addresses_.size() - 2); ++j2) {
                             //for (size_t j2 = i2 + 1; j2 < route2.addresses_.size() - 1; ++j2) {
                                 // std::cout << "Entering inner loop \n";
-                                improved = route1.SwapAndReverseSegments(route2, i1, j1, i2, j2);
+                                if (!route1.AnyAddressIsPrime(i1, j1) && !route2.AnyAddressIsPrime(i2, j2)) {
+                                    if (route1.SwapAndReverseSegments(route2, i1, j1, i2, j2)) {
+                                        improved = true;
+                                    }
+                                }
                                 // std::cout << "Exiting inner loop, improved = " << improved << "\n";
                             }
                         }

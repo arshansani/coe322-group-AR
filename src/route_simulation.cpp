@@ -17,8 +17,6 @@ int main() {
     int num_trucks = 2;
     // Address parameters
     int service_range = 20;
-    int prime_latest_delivery_date = 1;
-    int regular_latest_delivery_date = 14;
     int num_addresses = 100;
     double prime_customers_percent = 0.3;
     // Create a quantity of prime addresses and non prime addresses
@@ -33,11 +31,11 @@ int main() {
     // Generate random addresses
     AddressList list;
     for (int i = 0; i < num_prime_addresses; ++i) {
-        Address random_address = GenerateRandomAddress(service_range, prime_latest_delivery_date);
+        Address random_address = GenerateRandomAddress(service_range, true);
         list.AddAddress(random_address);
     }
     for (int i = 0; i < num_regular_addresses; ++i) {
-        Address random_address = GenerateRandomAddress(service_range, regular_latest_delivery_date);
+        Address random_address = GenerateRandomAddress(service_range, false);
         list.AddAddress(random_address);
     }
 
