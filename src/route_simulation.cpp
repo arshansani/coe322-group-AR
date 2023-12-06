@@ -87,28 +87,6 @@ int main() {
         std::cout << "Not enough trucks for multi-route optimization.\n";
     }
 
-/*
-    // Initialize route using addresses
-    Route route(list.GetAddresses());
-
-    // Calculate initial total distance
-    double initial_distance = route.TotalDistance();
-    std::cout << "Initial total distance: " << initial_distance << std::endl;
-    WriteRouteToJson(route.GetAddresses(), "route_before_optimization.json");
-
-    // Greedy routing optimization
-    route.GreedyRoute();
-    double greedy_distance = route.TotalDistance();
-    std::cout << "Greedy total distance: " << greedy_distance << std::endl;
-    WriteRouteToJson(route.GetAddresses(), "route_after_greedy_search.json");
-
-    // Opt2 routing optimization
-    route.OptimizeRoute();
-    double optimized_distance = route.TotalDistance();
-    std::cout << "Optimized total distance: " << optimized_distance << std::endl;
-    WriteRouteToJson(route.GetAddresses(), "route_after_optimization.json");
-*/
-
     return 0;
 }
 
