@@ -10,6 +10,7 @@ Address GenerateRandomAddress(int, int);
 int main() {
     // Seed for random number generation
     std::srand(std::time(0)); 
+    //std::srand(0); // Debugging
 
     // Delivery truck parameters
     int truck_daily_deliveries = 100;
@@ -46,6 +47,9 @@ int main() {
         trucks[i % num_trucks].AddAddress(list.GetAddresses()[i]);
     }
 
+    std::cout << "Route " << 1 << " Size: " << trucks[0].GetAddresses().size() << "\n";
+    std::cout << "Route " << 2 << " Size: " << trucks[1].GetAddresses().size() << "\n";
+
     // Write the individual routes to JSON files
     for (int i = 0; i < num_trucks; ++i) {
         total_initial_distance += trucks[i].TotalDistance();
@@ -69,7 +73,6 @@ int main() {
     std::cout << "Greedy Combined Total Distance: " << total_greedy_distance << "\n";
     std::cout << "Individual Opt2 Combined Total Distance: " << total_individual_opt2_distance << "\n";
 
-/*
     // Opt 2 Optimize across the two routes
     if (num_trucks >= 2) {
         std::cout << "Starting multi-route optimization...\n";
@@ -87,7 +90,7 @@ int main() {
     else {
         std::cout << "Not enough trucks for multi-route optimization.\n";
     }
-*/
+
 /*
     // Initialize route using addresses
     Route route(list.GetAddresses());

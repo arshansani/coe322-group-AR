@@ -10,6 +10,8 @@ private:
     double x_, y_;
     int last_delivery_date_;
 public:
+    Address() : x_(0.0), y_(0.0), last_delivery_date_(0) {}
+
     Address(double x, double y, int last_delivery_date) 
         : x_(x), y_(y), last_delivery_date_(last_delivery_date) {}
 
@@ -133,16 +135,35 @@ private:
         return segment;
     }
 
-    static void SwapSegments(std::vector<Address>& route1, size_t start1, size_t end1, std::vector<Address>& route2, size_t start2, size_t end2) {
-        std::vector<Address> tempSegment1(route1.begin() + start1, route1.begin() + end1 + 1);
-        std::vector<Address> tempSegment2(route2.begin() + start2, route2.begin() + end2 + 1);
+    static void SwapSegments(std::vector<Address>& route1, size_t start1, size_t end1, 
+                             std::vector<Address>& route2, size_t start2, size_t end2) {
+        // Validate indices to be within bounds
+        if (start1 > end1 || start2 > end2 || end1 >= route1.size() || end2 >= route2.size()) {
+            std::cout << "Index out of bounds. Exiting SwapSegments.\n";
+            return;
+        }
 
-        std::copy(tempSegment2.begin(), tempSegment2.end(), route1.begin() + start1);
-        std::copy(tempSegment1.begin(), tempSegment1.end(), route2.begin() + start2);
+        // Calculate the number of elements to swap
+        size_t numElements1 = end1 - start1 + 1;
+        size_t numElements2 = end2 - start2 + 1;
+
+        // Swapping segments
+        for (size_t i = 0; i < std::min(numElements1, numElements2); ++i) {
+            std::swap(route1[start1 + i], route2[start2 + i]);
+        }
+
+        // Handle cases where segment sizes are different
+        if (numElements1 != numElements2) {
+            // Example strategy: rotate elements to keep the route continuity
+            if (numElements1 > numElements2) {
+                std::rotate(route2.begin() + start2, route2.begin() + start2 + numElements1, route2.end());
+            } else {
+                std::rotate(route1.begin() + start1, route1.begin() + start1 + numElements2, route1.end());
+            }
+        }
     }
 
-    bool TrySwapAndReverseSegments(Route& otherRoute, size_t i1, size_t j1, size_t i2, size_t j2) {
-        std::cout << "Inside TrySwapAndReverseSegments. i1: " << i1 << ", j1: " << j1 << ", i2: " << i2 << ", j2: " << j2 << "\n";
+    bool SwapAndReverseSegments(Route& otherRoute, size_t i1, size_t j1, size_t i2, size_t j2) {
         bool improvementFound = false;
         double originalTotalDistance = CalculateSetTotalDistance(this->addresses_) 
                                      + CalculateSetTotalDistance(otherRoute.addresses_);
@@ -150,12 +171,13 @@ private:
         // Create copies of the original routes for manipulation
         std::vector<Address> newRoute1 = this->addresses_;
         std::vector<Address> newRoute2 = otherRoute.addresses_;
-
+        
         for (int reverse1 = 0; reverse1 <= 1; ++reverse1) {
             for (int reverse2 = 0; reverse2 <= 1; ++reverse2) {
+                
                 std::vector<Address> segment1 = ExtractAndReverseSegment(newRoute1, i1, j1, reverse1);
                 std::vector<Address> segment2 = ExtractAndReverseSegment(newRoute2, i2, j2, reverse2);
-
+                
                 SwapSegments(newRoute1, i1, j1, newRoute2, i2, j2);
 
                 double newTotalDistance = CalculateSetTotalDistance(newRoute1) 
@@ -169,9 +191,8 @@ private:
                 }
             }
         }
-        std::cout << "Exiting TrySwapAndReverseSegments.\n";
-        return false; // Return false for debugging
-        //return improvementFound;
+
+        return improvementFound;
     }
 public:
     // Constructors to create Route with initial_addresses
@@ -245,14 +266,17 @@ public:
             while (improved) {
                 improved = false;
 
+                //for (size_t i1 = 1; i1 < std::min(static_cast<size_t>(5), route1.addresses_.size() - 2); ++i1) {
                 for (size_t i1 = 1; i1 < route1.addresses_.size() - 2; ++i1) {
                     for (size_t j1 = i1 + 1; j1 < route1.addresses_.size() - 1; ++j1) {
                         for (size_t i2 = 1; i2 < route2.addresses_.size() - 2; ++i2) {
-                            //for (size_t j2 = i2 + 1; j2 < std::min(static_cast<size_t>(5), route1.addresses_.size() - 2); ++j2) {
-                            for (size_t j2 = i2 + 1; j2 < route2.addresses_.size() - 1; ++j2) {
-                                if (route1.TrySwapAndReverseSegments(route2, i1, j1, i2, j2)) {
+                            for (size_t j2 = i2 + 1; j2 < std::min(static_cast<size_t>(5), route1.addresses_.size() - 2); ++j2) {
+                            //for (size_t j2 = i2 + 1; j2 < route2.addresses_.size() - 1; ++j2) {
+                                //std::cout << "Entering inner loop \n";
+                                if (route1.SwapAndReverseSegments(route2, i1, j1, i2, j2)) {
                                     improved = true;
                                 }
+                                //std::cout << "Exiting inner loop \n";
                             }
                         }
                     }
