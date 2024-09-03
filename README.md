@@ -5,4 +5,4 @@ Create a build directory: mkdir build
 Enter the build directory: cd build
 Configure the project in CMake: cmake ../src 
 Compile the project: make
-Rune the project: ./RouteSimulation
+Run the project: ./RouteSimulation
